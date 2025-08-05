@@ -1,6 +1,9 @@
 import streamlit as st
 import time
 from controllers.load_usuarios import load_usuarios
+from datetime import date
+import re 
+from utils.validar_email import validar_email
 
 
 st.title("projeto Streamlit")
@@ -35,14 +38,37 @@ def logout():
         time.sleep(3)
         st.rerun()
 
-@st.dialog("Formulários de cadastro de alunos")
+@st.dialog("Formulários de cadastro de alunos", width=True)
 def cadastrar_aluno():
+    data_minima = date(1900, 1, 1)
+    data_maxima = date.today()
     Nome_aluno = st.text_input("Nome do aluno", placeholder="Nome do aluno")      
     Email_aluno = st.text_input("Email do aluno", placeholder="Email do aluno")      
-    CPF_aluno = st.text_input("CPF do aluno", placeholder="CPF do aluno")      
-    DataNasc_aluno = st.date_input("Data de nascimento do aluno")      
-    Telefone_aluno = st.text_input("Telefone do aluno", placeholder="Telefone do aluno")
-    btn_cadastrar = st.button("Cadastrar")      
+    CPF_aluno = st.text_input(
+        "CPF do aluno",
+        placeholder="CPF do aluno",
+        max_chars=11
+        )      
+    DataNasc_aluno = st.date_input(
+        "Data de nascimento do aluno",
+        value=data_maxima,
+        min_value=data_minima,
+        
+        )      
+    Telefone_aluno = st.text_input(
+        "Telefone do aluno",
+        placeholder="Telefone do aluno",
+        max_chars=11
+        )
+    
+    cpf_aluno_numeros = re.sub(r"\D", "", CPF_aluno)
+    Telefone_aluno_numeros = re.sub(r"\D","", Telefone_aluno)
+    email_isvalid = validar_email(Email_aluno)
+
+
+    btn_cadastrar = st.button("Cadastrar")
+    if btn_cadastrar:
+       st.write(email_isvalid)     
 
 def  main_page():
     tabs = st.tabs(["dashboard", "cadastro", "logout"])
@@ -66,21 +92,7 @@ if st.session_state.email:
 else:
     login()
 
-# if "contador" not in st.session_state:
-#     st.session_state.contador = 0
- 
-# if st.button("Adiciomar"):
-#     st.session_state.contador += 1
 
 
-# if st.button("Diminuir"):
-#    if st.session_state.contador > 0:
-#     st.session_state.contador -= 1
 
 
-# st.write(st.session_state)
-
-# # if not teste:
-# #     st.warning("A variavel esta vazia. ")
-# # else:
-# #     st.info("A variavel tem informação. ")
